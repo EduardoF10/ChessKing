@@ -193,6 +193,8 @@
     <ClCompile Include="Queen.cpp" />
     <ClCompile Include="Rook.cpp" />
     <ClCompile Include="Sprites.cpp" />
+    <ClCompile Include="src\Game\main.cpp" />
+    <ClCompile Include="src\Game\ofApp.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
     <ClCompile Include="Utils.cpp" />
@@ -225,6 +227,17 @@
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/D_DEBUG %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>$(OF_ROOT)\libs\openFrameworksCompiled\project\vs</AdditionalIncludeDirectories>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitattributes" />
+    <None Include=".gitignore" />
+    <None Include="addons.make" />
+    <None Include="bin\data\.gitkeep" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="bin\data\images\board\1.png" />
+    <Image Include="bin\data\images\pieces\blue.png" />
+    <Image Include="bin\data\images\pieces\red.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ProjectExtensions>

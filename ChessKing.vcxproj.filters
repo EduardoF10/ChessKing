@@ -47,6 +47,8 @@
     <ClCompile Include="Empty.cpp">
       <Filter>src\Game\Pieces</Filter>
     </ClCompile>
+    <ClCompile Include="src\Game\main.cpp" />
+    <ClCompile Include="src\Game\ofApp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -133,5 +135,16 @@
     <ClInclude Include="Empty.h">
       <Filter>src\Game\Pieces</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitattributes" />
+    <None Include=".gitignore" />
+    <None Include="addons.make" />
+    <None Include="bin\data\.gitkeep" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="bin\data\images\board\1.png" />
+    <Image Include="bin\data\images\pieces\blue.png" />
+    <Image Include="bin\data\images\pieces\red.png" />
   </ItemGroup>
 </Project>
