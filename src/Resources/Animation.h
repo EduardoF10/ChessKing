@@ -12,7 +12,7 @@ private:
 	bool end = true;
 
 public:
-	Animation(int speed, vector<ofImage> frames)
+	Animation(int speed, vector<ofImage> frames);
 
 
 

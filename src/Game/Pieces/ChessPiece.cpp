@@ -8,6 +8,8 @@ ChessPiece::ChessPiece(int ox, int oy, int ow, int oh, string team) {
     this->team = team;
 }
 
-void ChessPiece::renderOverworld() {
-    overworldSprite.draw(ox, oy, ow, oh);
+void ChessPiece::render() {
+    this->spriteObj.draw(ox, oy, ow, oh);
 }
+
+

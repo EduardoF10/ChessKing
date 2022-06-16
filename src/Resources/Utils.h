@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "Sprites.h"
+#include "../Game/Board/ChessBoard.h"
 
 class Utils {
 

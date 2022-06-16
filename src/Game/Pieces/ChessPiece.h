@@ -1,20 +1,19 @@
 #pragma once
 
 #include "ofMain.h"
-#include "Utils.h"
 
 class ChessPiece {
 protected:
     // Overworld Coordinates and dimensions
     int ox, oy, ow, oh;
-    ofImage overworldSprite;
+    ofImage spriteObj;
     vector<string> possibleDirections;
     string team;
     bool alive;
 
 public:
     ChessPiece(int ox, int oy, int ow, int oh, string team);
-    void renderOverworld();
+    void render();
     int getOX() { return ox; };
     int getOY() { return oy; };
     int getOW() { return ow; };

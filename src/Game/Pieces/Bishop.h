@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ChessPiece.h"
+#include "../../Resources/Utils.h"
 
 class Bishop : public ChessPiece {
 

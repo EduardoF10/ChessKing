@@ -26,3 +26,4 @@ ofImage Utils::getSprite(string name) {
         return Sprites::getBoardSprite();
     }
 }
+
