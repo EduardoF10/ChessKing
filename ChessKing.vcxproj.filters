@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\Game\Pieces\ChessPiece.cpp">
-      <Filter>src\Game\Pieces</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game\States\BattleState.cpp">
-      <Filter>src\Game\States</Filter>
-    </ClCompile>
     <ClCompile Include="src\Game\Board\BoardSquare.cpp">
       <Filter>src\Game\Board</Filter>
     </ClCompile>
@@ -19,32 +13,17 @@
     <ClCompile Include="src\Main\ofApp.cpp">
       <Filter>src\Main</Filter>
     </ClCompile>
-    <ClCompile Include="src\Resources\Animation.cpp">
-      <Filter>src\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Resources\Sprites.cpp">
-      <Filter>src\Resources</Filter>
-    </ClCompile>
     <ClCompile Include="src\Resources\Utils.cpp">
       <Filter>src\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game\Pieces\Rook.cpp">
-      <Filter>src\Game\Pieces</Filter>
+    <ClCompile Include="src\Resources\FluctSquare.cpp">
+      <Filter>src\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game\Pieces\Queen.cpp">
-      <Filter>src\Game\Pieces</Filter>
+    <ClCompile Include="src\Game\Player\Player.cpp">
+      <Filter>src\Game\Player</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game\Pieces\Pawn.cpp">
-      <Filter>src\Game\Pieces</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game\Pieces\Knight.cpp">
-      <Filter>src\Game\Pieces</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game\Pieces\King.cpp">
-      <Filter>src\Game\Pieces</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Game\Pieces\Bishop.cpp">
-      <Filter>src\Game\Pieces</Filter>
+    <ClCompile Include="src\Game\Piece\ChessPiece.cpp">
+      <Filter>src\Game\Piece</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -60,29 +39,23 @@
     <Filter Include="src\Resources">
       <UniqueIdentifier>{5b836ef4-5919-4f80-b36d-67316b1cb429}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Game\States">
-      <UniqueIdentifier>{9f0393d3-164e-4f43-ab87-b77687979b9c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Game\Pieces">
-      <UniqueIdentifier>{b2d9a1b8-bdaf-429f-ac81-4086ff0af61a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="images">
       <UniqueIdentifier>{6cbbd39b-ba6f-4efe-932d-0ce85488415f}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Game\Board">
       <UniqueIdentifier>{a702ce42-34b5-4b06-b1cd-5279650d173e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Game\Player">
+      <UniqueIdentifier>{a3c73d07-ea6c-497a-b553-063a436c89f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Game\Piece">
+      <UniqueIdentifier>{b2d9a1b8-bdaf-429f-ac81-4086ff0af61a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Game\Pieces\ChessPiece.h">
-      <Filter>src\Game\Pieces</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Game\States\BattleState.h">
-      <Filter>src\Game\States</Filter>
-    </ClInclude>
     <ClInclude Include="src\Game\Board\ChessBoard.h">
       <Filter>src\Game\Board</Filter>
     </ClInclude>
@@ -92,32 +65,17 @@
     <ClInclude Include="src\Main\ofApp.h">
       <Filter>src\Main</Filter>
     </ClInclude>
-    <ClInclude Include="src\Resources\Animation.h">
-      <Filter>src\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="src\Resources\Utils.h">
       <Filter>src\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="src\Resources\Sprites.h">
+    <ClInclude Include="src\Resources\FluctSquare.h">
       <Filter>src\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="src\Game\Pieces\Rook.h">
-      <Filter>src\Game\Pieces</Filter>
+    <ClInclude Include="src\Game\Player\Player.h">
+      <Filter>src\Game\Player</Filter>
     </ClInclude>
-    <ClInclude Include="src\Game\Pieces\Queen.h">
-      <Filter>src\Game\Pieces</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Game\Pieces\Pawn.h">
-      <Filter>src\Game\Pieces</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Game\Pieces\Knight.h">
-      <Filter>src\Game\Pieces</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Game\Pieces\King.h">
-      <Filter>src\Game\Pieces</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Game\Pieces\Bishop.h">
-      <Filter>src\Game\Pieces</Filter>
+    <ClInclude Include="src\Game\Piece\ChessPiece.h">
+      <Filter>src\Game\Piece</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
