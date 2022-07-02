@@ -47,7 +47,12 @@ private:
 	* 
 	* @param player1 - The team color of player 1
 	*/
-	void setBoard(string player1);  
+	void setBoard(string player1);
+
+	int invertX(int x);
+	int invertY(int y);
+
+	float tileWidth, tileHeight;  // The size of the screen will be measured using these tile dimensions
 
 
 public:
@@ -133,6 +138,19 @@ public:
 	* @return - A vector of coordinates that the piece can go to
 	*/
 	vector<vector<int>> ChessBoard::getValidMoves(string team, string direction, int ox, int oy, int ow, int oh);
+
+
+
+	/**
+	* Returns a chess tile coordinate
+	*
+	* @param x The x-coordinate of the mouse when it clicked
+	* @param y The y-coordinate of the mouse when it clicked
+	*
+	* @return A vector that contains the row and column value of the chess tile that was clicked and an
+	* additional value that indicates on which board it is on (left 0 right 1)
+	*/
+	vector<int> getTileCoordinate(int x, int y);
 
 };
 

@@ -9,7 +9,11 @@ class ChessPiece {
 
 private:
 
-    int ox, oy, ow, oh;  // Overworld Coordinates and dimensions
+    double leftX, leftY;  // Coordinates in the left board
+
+    double rightX, rightY; // Coordinates in the right board
+
+    double width, height; // Dimensions
 
     ofImage spriteObj;  // Chess piece image
 
@@ -29,17 +33,25 @@ public:
     /**
     * Constructor
     * 
-    * @param ox - The x coordinate in pixels of the chess piece
-    * @param oy - The y coordinate in pixels of the chess piece
-    * @param ow - The width distance in pixels of the chess piece
-    * @param oh - The height distance in pixels of the chess piece
+    * @param xL - The x coordinate in pixels of the chess piece in the left board
+    * @param yL - The y coordinate in pixels of the chess piece in the left board
+    * @param xR - The x coordinate in pixels of the chess piece in the right board
+    * @param yR - The y coordinate in pixels of the chess piece in the right board
+    * @param w - The width distance in pixels of the chess piece
+    * @param h - The height distance in pixels of the chess piece
     * @param team - The team color of the chess piece
     * @param type - The type of chess piece
     */
-    ChessPiece(int ox, int oy, int ow, int oh, string team, string type);
+    ChessPiece(int xL, int yL, int xR, int yR, int w, int h, string team, string type);
+
+    // The chess piece is rendered in the left board
+    void renderLeftBoard();
+
+    // The chess piece is rendered in the right board
+    void renderRightBoard();
 
 
-    // The chess piece is rendered in its current location
+    // The chess piece is rendered in both boards
     void render();
 
 
@@ -53,19 +65,19 @@ public:
 
 
     // @return The x coordinate in pixels of the chess piece
-    int getOX() { return ox; };
+    int getOX() { return leftX; };
 
 
     // @return The y coordinate in pixels of the chess piece
-    int getOY() { return oy; };
+    int getOY() { return leftY; };
 
 
     // @return The width distance in pixels of the chess piece
-    int getOW() { return ow; };
+    int getOW() { return width; };
 
 
     // @return The height distance in pixels of the chess piece
-    int getOH() { return oh; };
+    int getOH() { return height; };
 
 
     // @return The type of chess piece
@@ -90,13 +102,13 @@ public:
 
 
     // Sets coordinates and dimensions
-    void setOX(int ox) { this->ox = ox; };
+    void setOX(int ox) { this->leftX = ox; };
     // Sets coordinates and dimensions
-    void setOY(int oy) { this->oy = oy; };
+    void setOY(int oy) { this->rightY = oy; };
     // Sets coordinates and dimensions
-    void setOW(int ow) { this->ow = ow; };
+    void setOW(int ow) { this->width = ow; };
     // Sets coordinates and dimensions
-    void setOH(int oh) { this->oh = oh; };
+    void setOH(int oh) { this->height = oh; };
 
 
 

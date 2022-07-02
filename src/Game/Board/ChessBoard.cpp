@@ -9,6 +9,9 @@
 #define HORIZONTAL_HORSE_MOVE 3
 #define VERTICAL_HORSE_MOVE 4
 
+constexpr auto WIDTH_CONSTANT = (12.0 / 106.0) + 18;
+constexpr auto HEIGHT_CONSTANT = 10;
+
 
 ChessBoard::ChessBoard(string player1) {
 	setBoard(player1);
@@ -22,8 +25,8 @@ void ChessBoard::setBoard(string player1) {
 	this->activePiece = 0;
 	this->clickEnabled = true;
 	this->moveEnabled = false;
-	this->boardSprite.load("images/board/2.png");
-	this->fluctile = new FluctSquare("images/board/2.png");
+	this->boardSprite.load("images/board/dual1.png");
+	this->fluctile = new FluctSquare("images/board/dual1.png");
 	this->fluctEnabled = false;
 	this->validMoves = {};
 	this->moveDestination = {};
@@ -33,14 +36,16 @@ void ChessBoard::setBoard(string player1) {
 	this->player1Pieces = {};
 
 	// Filling the first row of the board
-	ChessPiece* rook1 = new ChessPiece(0, 847, 128, 121, player1, "rook");
-	ChessPiece* rook2 = new ChessPiece(896, 847, 128, 121, player1, "rook");
-	ChessPiece* knight1 = new ChessPiece(128, 847, 128, 121, player1, "knight");
-	ChessPiece* knight2 = new ChessPiece(768, 847, 128, 121, player1, "knight");
-	ChessPiece* bishop1 = new ChessPiece(256, 847, 128, 121, player1, "bishop");
-	ChessPiece* bishop2 = new ChessPiece(640, 847, 128, 121, player1, "bishop");
-	ChessPiece* queen = new ChessPiece(384, 847, 128, 121, player1, "queen");
-	ChessPiece* king = new ChessPiece(512, 847, 128, 121, player1, "king");
+	ChessPiece* rook1 = new ChessPiece(53, 864, 1019, 108, 106, 108, player1, "rook");
+	ChessPiece* knight1 = new ChessPiece(159, 864, 1125, 108, 106, 108, player1, "knight");
+	ChessPiece* bishop1 = new ChessPiece(265, 864, 1231, 108, 106, 108, player1, "bishop");
+	ChessPiece* queen = new ChessPiece(371, 864, 1337, 108, 106, 108, player1, "queen");
+	ChessPiece* king = new ChessPiece(477, 864, 1443, 108, 106, 108, player1, "king");
+	ChessPiece* bishop2 = new ChessPiece(583, 864, 1549, 108, 106, 108, player1, "bishop");
+	ChessPiece* knight2 = new ChessPiece(689, 864, 1655, 108, 106, 108, player1, "knight");
+	ChessPiece* rook2 = new ChessPiece(795, 864, 1761, 108, 106, 108, player1, "rook");
+
+
 	BoardSquare* bs00 = new BoardSquare(rook1);
 	BoardSquare* bs01 = new BoardSquare(knight1);
 	BoardSquare* bs02 = new BoardSquare(bishop1);
@@ -71,7 +76,7 @@ void ChessBoard::setBoard(string player1) {
 
 	// Filling the second row of the board and updating the pieces of player1
 	for (int i = 0; i < 8; i++) {
-		ChessPiece* pawn = new ChessPiece(i * 128, 726, 128, 121, player1, "pawn");
+		ChessPiece* pawn = new ChessPiece(53 + (i * 106), 756, 1019 + (i * 106), 216, 106, 108, player1, "pawn");
 		BoardSquare* bsq = new BoardSquare(pawn);
 		this->boardSquares[1][i] = bsq;
 		player1Pieces.push_back(pawn);
@@ -84,6 +89,17 @@ void ChessBoard::setBoard(string player1) {
 			this->boardSquares[row][col] = bsq;
 		}
 	}
+
+}
+
+int ChessBoard::invertX(int x)
+{
+	return 0;
+}
+
+int ChessBoard::invertY(int y)
+{
+	return 0;
 }
 
 void ChessBoard::render() {
@@ -276,7 +292,7 @@ ChessPiece* ChessBoard::getPieceCopy(ChessPiece* piece) {
 	int oh = piece->getOH();
 	string team = piece->getTeam();
 	string type = piece->getType();
-	ChessPiece* result = new ChessPiece(ox, oy, ow, oh, team, type);
+	ChessPiece* result = new ChessPiece(ox, oy, ox, oy, ow, oh, team, type);
 	return result;
 }
 
@@ -479,6 +495,57 @@ vector<vector<int>> ChessBoard::getValidMoves(string team, string direction, int
 	}
 	
 	return directions;
+}
+
+vector<int> ChessBoard::getTileCoordinate(int x, int y) {
+
+	int rightBoardStartX = tileWidth * ((12.0 / 106.0) + 9.5);
+	int row = -1;
+	int col = -1;
+
+
+	// The column depends on the which side of the board the piece is on
+	if (x < rightBoardStartX) {
+
+		// Finding row
+		for (int i = 0; i < 8; i++) {
+			if (y < (tileHeight + (tileHeight * i))) {
+				row = 7 - i;
+			}
+		}
+
+		// Finding col
+		for (int i = 0; i < 8; i++) {
+			if (x < (tileWidth + (tileWidth * i))) {
+				col = i;
+			}
+		}
+
+		vector<int> result = { row, col, 0 };
+		return result;
+
+	}
+	else {
+
+		// Finding row
+		for (int i = 0; i < 8; i++) {
+			if (y < (tileHeight + (tileHeight * i))) {
+				row = i;
+			}
+		}
+
+		// Finding col
+		for (int i = 0; i < 8; i++) {
+			if (x < (rightBoardStartX + (tileWidth * i))) {
+				col = 7 - i;
+			}
+		}
+
+		vector<int> result = { row, col, 1 };
+		return result;
+
+	}
+
 }
 
 

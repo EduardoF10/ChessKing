@@ -27,7 +27,8 @@ public:
 	* @param x The x-coordinate of the mouse when it clicked
 	* @param y The y-coordinate of the mouse when it clicked
 	*
-	* @return A vector that contains the row and column value of the chess tile that was clicked
+	* @return A vector that contains the row and column value of the chess tile that was clicked and an 
+	* additional value that indicates on which board it is on (left 0 right 1)
 	*/
 	static vector<int> getTileCoordinate(int x, int y);
 
@@ -39,5 +40,10 @@ public:
 	* @return The absolute value of x
 	*/
 	static int absInt(int x);
+
+	static int invertX(int x);
+
+
+	static int invertY(int Y);
 };
 

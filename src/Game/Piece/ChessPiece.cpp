@@ -1,11 +1,13 @@
 #include "ChessPiece.h"
 #include "../../Resources/Utils.h"
 
-ChessPiece::ChessPiece(int ox, int oy, int ow, int oh, string team, string type) {
-    this->ox = ox;
-    this->oy = oy;
-    this->ow = ow;
-    this->oh = oh;
+ChessPiece::ChessPiece(int xL, int yL, int xR, int yR, int w, int h, string team, string type) {
+    this->leftX = xL;
+    this->leftY = yL;
+    this->rightX = xR;
+    this->rightY = yR;
+    this->width = w;
+    this->height = h;
     this->team = team;
     this->selected = false;
     this->alive = true;
@@ -38,14 +40,24 @@ ChessPiece::ChessPiece(int ox, int oy, int ow, int oh, string team, string type)
     }
 }
 
+void ChessPiece::renderLeftBoard() {
+
+}
+
+void ChessPiece::renderRightBoard()
+{
+}
+
 void ChessPiece::render() {
 
-    this->spriteObj.draw(ox, oy, ow, oh);
+    this->spriteObj.draw(leftX, leftY, width, height);
+    this->spriteObj.draw(rightX, rightY, width, height);
+
 
 }
 
 void ChessPiece::render(int ox, int oy) {
-    this->spriteObj.draw(ox, oy, ow, oh);
+    this->spriteObj.draw(ox, oy, width, height);
 }
 
 bool ChessPiece::sameTeam(string team) {
