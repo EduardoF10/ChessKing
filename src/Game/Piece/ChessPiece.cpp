@@ -40,13 +40,6 @@ ChessPiece::ChessPiece(int xL, int yL, int xR, int yR, int w, int h, string team
     }
 }
 
-void ChessPiece::renderLeftBoard() {
-
-}
-
-void ChessPiece::renderRightBoard()
-{
-}
 
 void ChessPiece::render() {
 
@@ -56,9 +49,6 @@ void ChessPiece::render() {
 
 }
 
-void ChessPiece::render(int ox, int oy) {
-    this->spriteObj.draw(ox, oy, width, height);
-}
 
 bool ChessPiece::sameTeam(string team) {
     if (this == NULL) {

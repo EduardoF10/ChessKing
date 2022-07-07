@@ -22,6 +22,9 @@ ChessBoard::ChessBoard(string player1) {
 void ChessBoard::setBoard(string player1) {
 
 	// Initializing the properties
+	this->tileWidth = 106.0;
+	this->tileHeight = 108.0;
+	this->boardTurn = 0;
 	this->activePiece = 0;
 	this->clickEnabled = true;
 	this->moveEnabled = false;
@@ -36,14 +39,14 @@ void ChessBoard::setBoard(string player1) {
 	this->player1Pieces = {};
 
 	// Filling the first row of the board
-	ChessPiece* rook1 = new ChessPiece(53, 864, 1019, 108, 106, 108, player1, "rook");
-	ChessPiece* knight1 = new ChessPiece(159, 864, 1125, 108, 106, 108, player1, "knight");
-	ChessPiece* bishop1 = new ChessPiece(265, 864, 1231, 108, 106, 108, player1, "bishop");
-	ChessPiece* queen = new ChessPiece(371, 864, 1337, 108, 106, 108, player1, "queen");
-	ChessPiece* king = new ChessPiece(477, 864, 1443, 108, 106, 108, player1, "king");
-	ChessPiece* bishop2 = new ChessPiece(583, 864, 1549, 108, 106, 108, player1, "bishop");
-	ChessPiece* knight2 = new ChessPiece(689, 864, 1655, 108, 106, 108, player1, "knight");
-	ChessPiece* rook2 = new ChessPiece(795, 864, 1761, 108, 106, 108, player1, "rook");
+	ChessPiece* rook1 = new ChessPiece(53, 864, 1761, 108, 106, 108, player1, "rook");
+	ChessPiece* knight1 = new ChessPiece(159, 864, 1655, 108, 106, 108, player1, "knight");
+	ChessPiece* bishop1 = new ChessPiece(265, 864, 1549, 108, 106, 108, player1, "bishop");
+	ChessPiece* queen = new ChessPiece(371, 864, 1443, 108, 106, 108, player1, "queen");
+	ChessPiece* king = new ChessPiece(477, 864, 1337, 108, 106, 108, player1, "king");
+	ChessPiece* bishop2 = new ChessPiece(583, 864, 1231, 108, 106, 108, player1, "bishop");
+	ChessPiece* knight2 = new ChessPiece(689, 864, 1125, 108, 106, 108, player1, "knight");
+	ChessPiece* rook2 = new ChessPiece(795, 864, 1019, 108, 106, 108, player1, "rook");
 
 
 	BoardSquare* bs00 = new BoardSquare(rook1);
@@ -76,7 +79,7 @@ void ChessBoard::setBoard(string player1) {
 
 	// Filling the second row of the board and updating the pieces of player1
 	for (int i = 0; i < 8; i++) {
-		ChessPiece* pawn = new ChessPiece(53 + (i * 106), 756, 1019 + (i * 106), 216, 106, 108, player1, "pawn");
+		ChessPiece* pawn = new ChessPiece(53 + (i * 106), 756, 1019 + ((7 - i) * 106), 216, 106, 108, player1, "pawn");
 		BoardSquare* bsq = new BoardSquare(pawn);
 		this->boardSquares[1][i] = bsq;
 		player1Pieces.push_back(pawn);
@@ -92,15 +95,6 @@ void ChessBoard::setBoard(string player1) {
 
 }
 
-int ChessBoard::invertX(int x)
-{
-	return 0;
-}
-
-int ChessBoard::invertY(int y)
-{
-	return 0;
-}
 
 void ChessBoard::render() {
 	this->boardSprite.draw(0, 0);
@@ -109,7 +103,7 @@ void ChessBoard::render() {
 		player1Pieces.at(i)->render();
 	}
 	if (fluctEnabled) {
-		this->fluctile->render(activePiece, validMoves);
+		this->fluctile->render(activePiece, validMoves, boardTurn);
 		this->fluctile->tick();
 		ofSetColor(255, 255, 255);
 	}
@@ -121,7 +115,17 @@ void ChessBoard::render() {
 void ChessBoard::onClick(int x, int y) {
 
 	// Getting the coordinates of the tile that was clicked
-	vector<int> tileLocation = Utils::getTileCoordinate(x, y);
+	vector<int> tileLocation = getTileCoordinate(x, y);
+
+	// Check if out of bounds
+	if (tileLocation.at(0) == -1 || tileLocation.at(1) == -1) {
+		return;
+	}
+	
+	// Return if wrong side of the board was clicked
+	if (tileLocation.at(2) != boardTurn) {
+		return;
+	}
 	int row = tileLocation.at(0);
 	int col = tileLocation.at(1);
 
@@ -138,7 +142,7 @@ void ChessBoard::onClick(int x, int y) {
 
 	// If the same piece was clicked, selection resets
 	if (activePiece != NULL) {
-		vector<int> activeTile = Utils::getTileCoordinate(activePiece->getOX(), activePiece->getOY());
+		vector<int> activeTile = getTileCoordinate(activePiece->getLX(), activePiece->getLY());
 		if (row == activeTile.at(0) && col == activeTile.at(1)) {
 			this->fluctile->reset();
 			this->fluctEnabled = false;
@@ -149,27 +153,29 @@ void ChessBoard::onClick(int x, int y) {
 
 	}
 
-	// If the player clicked on an empty tile or out of bounds
-	if (row == 8 || col == 8 || !boardSquares[row][col]->inUse()) {
-		return;
-	}
-
 	// If the player clicked on one of his pieces
-	else if (boardSquares[row][col]->getResident()->sameTeam(currentPlayer->getTeam())) {
+	if (boardSquares[row][col]->getResident()->sameTeam(currentPlayer->getTeam())) {
 		this->validMoves.clear();
 
 		// Setting the active piece
 		this->activePiece = getPieceCopy(boardSquares[row][col]->getResident());
 
-		// Getting the active piece coordinates
-		int OX = activePiece->getOX();
-		int OY = activePiece->getOY();
-		int OW = activePiece->getOW();
-		int OH = activePiece->getOH();
+		// Getting the active piece coordinates depending on the side of the board
+		int xCoordinate, yCoordinate;
+		if (boardTurn == 0) {
+			xCoordinate = activePiece->getLX();
+			yCoordinate = activePiece->getLY();
+		}
+		else {
+			xCoordinate = activePiece->getRX();
+			yCoordinate = activePiece->getRY();
+		}
+		int pieceWidth = activePiece->getW();
+		int pieceHeight = activePiece->getH();
 
 		// Getting the valid moves for each possible direction
 		for (int i = 0; i < activePiece->getDirections().size(); i++) {
-			vector<vector<int>> possibleMoves = getValidMoves(activePiece->getTeam(), activePiece->getDirections().at(i), OX, OY, OW, OH);
+			vector<vector<int>> possibleMoves = getValidMoves(activePiece->getTeam(), activePiece->getDirections().at(i), xCoordinate, yCoordinate, pieceWidth, pieceHeight);
 			for (int j = 0; j < possibleMoves.size(); j++) {
 				validMoves.push_back(possibleMoves.at(j));
 			}
@@ -181,23 +187,31 @@ void ChessBoard::onClick(int x, int y) {
 
 }
 
+
 void ChessBoard::tick() {
 	fluctile->tick();
 }
 
 
-
 void ChessBoard::renderMove() {
-	vector<int> tileLoc = Utils::getTileCoordinate(activePiece->getOX(), activePiece->getOY());
+	vector<int> tileLoc = {};
+	if (boardTurn == 0) {
+		tileLoc = getTileCoordinate(activePiece->getLX(), activePiece->getLY());
+	}
+	else {
+		tileLoc = getTileCoordinate(activePiece->getRX(), activePiece->getRY());
+	}
 	int row = tileLoc.at(0);
 	int col = tileLoc.at(1);
-	int residentX = boardSquares[row][col]->getResident()->getOX();
-	int residentY = boardSquares[row][col]->getResident()->getOY();
+	int residentLX = boardSquares[row][col]->getResident()->getLX();
+	int residentRX = boardSquares[row][col]->getResident()->getRX();
+	int residentLY = boardSquares[row][col]->getResident()->getLY();
+	int residentRY = boardSquares[row][col]->getResident()->getRY();
 
 	// When the move cycle has ended
 	if (this->moveCounter == 0) {
-		boardSquares[row][col]->setPieceCoordinates(moveDestination.at(0), moveDestination.at(1));
-		vector<int> currentTile = Utils::getTileCoordinate(moveDestination.at(0), moveDestination.at(1));
+		boardSquares[row][col]->setPieceCoordinates(moveDestination.at(0), moveDestination.at(1), moveDestination.at(2), moveDestination.at(3));
+		vector<int> currentTile = getTileCoordinate(moveDestination.at(0), moveDestination.at(1));
 		ChessPiece* movedPiece = boardSquares[row][col]->getResident();
 		boardSquares[row][col]->clear();
 
@@ -211,20 +225,24 @@ void ChessBoard::renderMove() {
 	}
 	else {
 		// Updating the coordinates of the moving chess piece
-		boardSquares[row][col]->setPieceCoordinates(residentX + (int) moveSpeed.at(0), residentY + (int) moveSpeed.at(1));
+		boardSquares[row][col]->setPieceCoordinates(residentLX + (int) moveSpeed.at(0), residentLY + (int) moveSpeed.at(1), residentRX + (int) moveSpeed.at(2), residentRY + (int) moveSpeed.at(3));
 		this->moveCounter--;
 	}
 }
 
-void ChessBoard::setMove(int xGoal, int yGoal, int moveToken) {
-	this->moveDestination = { xGoal, yGoal };
-	int xDiff = xGoal - activePiece->getOX();
-	int yDiff = yGoal - activePiece->getOY();
+
+void ChessBoard::setMove(int row, int col, int moveToken) {
+	vector<int> leftCoordinates = getCoordinateFromTile(row, col, 0);
+	vector<int> rightCoordinates = getCoordinateFromTile(row, col, 1);
+	this->moveDestination = { leftCoordinates.at(0), leftCoordinates.at(1), rightCoordinates.at(0), rightCoordinates.at(1) };
+
+	int xDiff = leftCoordinates.at(0) - activePiece->getLX();
+	int yDiff = leftCoordinates.at(1) - activePiece->getLY();
 	int xDiffPos = Utils::absInt(xDiff);
 	int yDiffPos = Utils::absInt(yDiff);
 
 	// Max amount of tiles traveled in one of the axis
-	int counter = max(xDiffPos / 128, yDiffPos / 121);
+	int counter = max(xDiffPos / tileWidth, yDiffPos / tileHeight);
 
 	this->moveCounter = counter * 5;
 
@@ -245,39 +263,40 @@ void ChessBoard::setMove(int xGoal, int yGoal, int moveToken) {
 
 	// Horizontal moves
 	if (moveToken == HORIZONTAL_MOVE) {
-		this->moveSpeed = { 25.6f * xSign, 0};
+		this->moveSpeed = { 21.2f * xSign, 0, -21.2f * xSign, 0};
 	}
 	// Vertical moves
 	else if (moveToken == VERTICAL_MOVE) {
-		this->moveSpeed = { 0, 24.2f * ySign};
+		this->moveSpeed = { 0, 21.6f * ySign, 0, -21.6f * ySign};
 	}
 	// Diagonal moves
 	else if (moveToken == DIAGONAL_MOVE) {
-		this->moveSpeed = { 21.3f * xSign, 20.2f * ySign };
+		this->moveSpeed = { 17.6f * xSign, 18.0f * ySign, -17.6f * xSign, -18.0f * ySign };
 		this->moveCounter = counter * 6;
 	}
 	// Horse move long horizontal
 	else if (moveToken == HORIZONTAL_HORSE_MOVE) {
-		this->moveSpeed = { 25.6f * xSign, 12.1f * ySign};
+		this->moveSpeed = { 21.2f * xSign, 10.8f * ySign, -21.2f * xSign, -10.8f * ySign};
 	}
 	// Horse move long vertical
 	else {
-		this->moveSpeed = { 12.8f * xSign, 24.2f * ySign};
+		this->moveSpeed = { 10.6f * xSign, 21.6f * ySign, -10.6f * xSign, -21.6f * ySign };
 	}
 }
 
 
 bool ChessBoard::clickedValidMove(int x, int y) {
-	vector<int> clickedTile = Utils::getTileCoordinate(x, y);
+	vector<int> clickedTile = getTileCoordinate(x, y);
 
 	// Getting tile coordinates
-	int tileX = clickedTile.at(1) * 128;
-	int tileY = 847 - (121 * clickedTile.at(0));
+	vector<int> coordinates = getCoordinateFromTile(clickedTile.at(0), clickedTile.at(1), clickedTile.at(2));
+	int tileX = coordinates.at(0);
+	int tileY = coordinates.at(1);
 
 	// Verifying if a valid move tile was clicked
 	for (int i = 0; i < validMoves.size(); i++) {
-		if (validMoves.at(i).at(0) == tileX && validMoves.at(i).at(1) == tileY) {
-			setMove(tileX, tileY, validMoves.at(i).at(2));
+		if ((validMoves.at(i).at(0) == tileX && validMoves.at(i).at(1) == tileY)) {
+			setMove(clickedTile.at(0), clickedTile.at(1), validMoves.at(i).at(2));
 			return true;
 		}
 	}
@@ -285,17 +304,19 @@ bool ChessBoard::clickedValidMove(int x, int y) {
 
 }
 
+
 ChessPiece* ChessBoard::getPieceCopy(ChessPiece* piece) {
-	int ox = piece->getOX();
-	int oy = piece->getOY();
-	int ow = piece->getOW();
-	int oh = piece->getOH();
+	int xL = piece->getLX();
+	int xR = piece->getRX();
+	int yL = piece->getLY();
+	int yR = piece->getRY();
+	int width = piece->getW();
+	int height = piece->getH();
 	string team = piece->getTeam();
 	string type = piece->getType();
-	ChessPiece* result = new ChessPiece(ox, oy, ox, oy, ow, oh, team, type);
+	ChessPiece* result = new ChessPiece(xL, yL, xR, yR, width, height, team, type);
 	return result;
 }
-
 
 
 vector<vector<int>> ChessBoard::getValidMoves(string team, string direction, int ox, int oy, int ow, int oh) {
@@ -317,16 +338,16 @@ vector<vector<int>> ChessBoard::getValidMoves(string team, string direction, int
 	vector<string> pawnDir = { "01" };
 	if (activePiece->getDirections() == pawnDir) {
 		if (oy > 0) {
-			coor = Utils::getTileCoordinate(ox, oy - oh);
+			coor = getTileCoordinate(ox, oy - oh);
 			if (boardSquares[coor.at(0)][coor.at(1)] == NULL || !boardSquares[coor.at(0)][coor.at(1)]->getResident()->sameTeam(team)) {
 				vector<int> move1 = { ox, oy - oh, VERTICAL_MOVE };
 				directions.push_back(move1);
 
 				// If the pawn is at starting position
-				if (oy == 726) {
-					coor = Utils::getTileCoordinate(ox, 484);
+				if (boardTurn == 0 && oy == tileHeight * 7) {
+					coor = getTileCoordinate(ox, tileHeight * 5);
 					if (boardSquares[coor.at(0)][coor.at(1)] == NULL || !boardSquares[coor.at(0)][coor.at(1)]->getResident()->sameTeam(team)) {
-						vector<int> move2 = { ox, 484, VERTICAL_MOVE };
+						vector<int> move2 = { ox, (int) tileHeight * 5, VERTICAL_MOVE };
 						directions.push_back(move2);
 					}
 				}
@@ -334,22 +355,26 @@ vector<vector<int>> ChessBoard::getValidMoves(string team, string direction, int
 		}
 		return directions;
 	}
+
+	int rightBoardStartX = tileWidth * ((12.0 / 106.0) + 9.5);
+	int boardEnd = ofGetWindowWidth() - (tileWidth / 2);
+
 	if (dirX != 72 && dirY != 72) {
 		for (int i = 0; i < 2; i++) {
 			newOX = ox + (dirX * ow * multX);
 			multX *= -1;
 			// Check if the square is bounded in the region
-			if (newOX > 896 || newOX < 0) {
+			if ((newOX < tileWidth / 2) || ((newOX >= tileWidth * 8.5) && (newOX < rightBoardStartX)) || (newOX >= boardEnd)) {
 				continue;
 			}
 			for (int j = 0; j < 2; j++) {
 				newOY = oy + (dirY * oh * multY);
 				multY *= -1;
 				// Check if the square is bounded in the region
-				if (newOY > 847 || newOY < 0) {
+				if (newOY < tileHeight || newOY >= tileHeight * 8) {
 					continue;
 				}
-				coor = Utils::getTileCoordinate(newOX, newOY);
+				coor = getTileCoordinate(newOX, newOY);
 				if (boardSquares[coor.at(0)][coor.at(1)] == NULL || !boardSquares[coor.at(0)][coor.at(1)]->getResident()->sameTeam(team)) {
 					// If it's a knight
 					vector<string> knightDir = { "21", "12" };
@@ -386,9 +411,9 @@ vector<vector<int>> ChessBoard::getValidMoves(string team, string direction, int
 	// "0x" scenario
 	else if (dirX == 0) {
 		newOY = oy;
-		while (newOY < 847) {
+		while (newOY < tileHeight * 8) {
 			newOY += oh;
-			coor = Utils::getTileCoordinate(ox, newOY);
+			coor = getTileCoordinate(ox, newOY);
 			if (boardSquares[coor.at(0)][coor.at(1)] == NULL || !boardSquares[coor.at(0)][coor.at(1)]->getResident()->sameTeam(team)) {
 				directions.push_back({ ox, newOY, VERTICAL_MOVE });
 			}
@@ -397,9 +422,9 @@ vector<vector<int>> ChessBoard::getValidMoves(string team, string direction, int
 			}
 		}
 		newOY = oy;
-		while (newOY > 0) {
+		while (newOY > tileHeight) {
 			newOY -= oh;
-			coor = Utils::getTileCoordinate(ox, newOY);
+			coor = getTileCoordinate(ox, newOY);
 			if (boardSquares[coor.at(0)][coor.at(1)] == NULL || !boardSquares[coor.at(0)][coor.at(1)]->getResident()->sameTeam(team)) {
 				directions.push_back({ ox, newOY, VERTICAL_MOVE });
 			}
@@ -411,9 +436,9 @@ vector<vector<int>> ChessBoard::getValidMoves(string team, string direction, int
 	// "x0" scenario
 	else if (dirY == 0) {
 		newOX = ox;
-		while (newOX < 896) {
+		while (newOX < tileWidth * 7.5 && newOX < boardEnd - tileWidth) {
 			newOX += ow;
-			coor = Utils::getTileCoordinate(newOX, oy);
+			coor = getTileCoordinate(newOX, oy);
 			if (boardSquares[coor.at(0)][coor.at(1)] == NULL || !boardSquares[coor.at(0)][coor.at(1)]->getResident()->sameTeam(team)) {
 				directions.push_back({ newOX, oy, HORIZONTAL_MOVE });
 			}
@@ -422,9 +447,9 @@ vector<vector<int>> ChessBoard::getValidMoves(string team, string direction, int
 			}
 		}
 		newOX = ox;
-		while (newOX > 0) {
+		while (newOX > tileWidth / 2) {
 			newOX -= ow;
-			coor = Utils::getTileCoordinate(newOX, oy);
+			coor = getTileCoordinate(newOX, oy);
 			if (boardSquares[coor.at(0)][coor.at(1)] == NULL || !boardSquares[coor.at(0)][coor.at(1)]->getResident()->sameTeam(team)) {
 				directions.push_back({ newOX, oy, HORIZONTAL_MOVE });
 			}
@@ -440,11 +465,11 @@ vector<vector<int>> ChessBoard::getValidMoves(string team, string direction, int
 		newOX = ox;
 		int newPosY = oy;
 		int newNegY = oy;
-		while (newOX < 896) {
+		while (newOX < tileWidth * 7.5 && newOX < boardEnd - tileWidth) {
 			newOX += ow;
-			if (newPosY < 847 && upY == true) {
+			if (newPosY < tileHeight * 8 && upY == true) {
 				newPosY += oh;
-				coor = Utils::getTileCoordinate(newOX, newPosY);
+				coor = getTileCoordinate(newOX, newPosY);
 				if (boardSquares[coor.at(0)][coor.at(1)] == NULL || !boardSquares[coor.at(0)][coor.at(1)]->getResident()->sameTeam(team)) {
 					directions.push_back({ newOX, newPosY, DIAGONAL_MOVE });
 				}
@@ -452,9 +477,9 @@ vector<vector<int>> ChessBoard::getValidMoves(string team, string direction, int
 					upY = false;
 				}
 			}
-			if (newNegY > 0 && downY == true) {
+			if (newNegY > tileHeight && downY == true) {
 				newNegY -= oh;
-				coor = Utils::getTileCoordinate(newOX, newNegY);
+				coor = getTileCoordinate(newOX, newNegY);
 				if (boardSquares[coor.at(0)][coor.at(1)] == NULL || !boardSquares[coor.at(0)][coor.at(1)]->getResident()->sameTeam(team)) {
 					directions.push_back({ newOX, newNegY, DIAGONAL_MOVE });
 				}
@@ -468,11 +493,11 @@ vector<vector<int>> ChessBoard::getValidMoves(string team, string direction, int
 		newOX = ox;
 		newPosY = oy;
 		newNegY = oy;
-		while (newOX > 0) {
+		while (newOX > tileWidth / 2) {
 			newOX -= ow;
-			if (newPosY < 847 && upY == true) {
+			if (newPosY < tileHeight * 8 && upY == true) {
 				newPosY += oh;
-				coor = Utils::getTileCoordinate(newOX, newPosY);
+				coor = getTileCoordinate(newOX, newPosY);
 				if (boardSquares[coor.at(0)][coor.at(1)] == NULL || !boardSquares[coor.at(0)][coor.at(1)]->getResident()->sameTeam(team)) {
 					directions.push_back({ newOX, newPosY, DIAGONAL_MOVE });
 				}
@@ -480,9 +505,9 @@ vector<vector<int>> ChessBoard::getValidMoves(string team, string direction, int
 					upY = false;
 				}
 			}
-			if (newNegY > 0 && downY == true) {
+			if (newNegY > tileHeight && downY == true) {
 				newNegY -= oh;
-				coor = Utils::getTileCoordinate(newOX, newNegY);
+				coor = getTileCoordinate(newOX, newNegY);
 				if (boardSquares[coor.at(0)][coor.at(1)] == NULL || !boardSquares[coor.at(0)][coor.at(1)]->getResident()->sameTeam(team)) {
 					directions.push_back({ newOX, newNegY, DIAGONAL_MOVE });
 				}
@@ -497,6 +522,7 @@ vector<vector<int>> ChessBoard::getValidMoves(string team, string direction, int
 	return directions;
 }
 
+
 vector<int> ChessBoard::getTileCoordinate(int x, int y) {
 
 	int rightBoardStartX = tileWidth * ((12.0 / 106.0) + 9.5);
@@ -509,15 +535,17 @@ vector<int> ChessBoard::getTileCoordinate(int x, int y) {
 
 		// Finding row
 		for (int i = 0; i < 8; i++) {
-			if (y < (tileHeight + (tileHeight * i))) {
+			if (y < ((tileHeight * 2) + (tileHeight * i))) {
 				row = 7 - i;
+				break;
 			}
 		}
 
 		// Finding col
 		for (int i = 0; i < 8; i++) {
-			if (x < (tileWidth + (tileWidth * i))) {
+			if (x < ((tileWidth / 2) + tileWidth + (tileWidth * i))) {
 				col = i;
+				break;
 			}
 		}
 
@@ -529,15 +557,17 @@ vector<int> ChessBoard::getTileCoordinate(int x, int y) {
 
 		// Finding row
 		for (int i = 0; i < 8; i++) {
-			if (y < (tileHeight + (tileHeight * i))) {
+			if (y < ((tileHeight * 2) + (tileHeight * i))) {
 				row = i;
+				break;
 			}
 		}
 
 		// Finding col
 		for (int i = 0; i < 8; i++) {
-			if (x < (rightBoardStartX + (tileWidth * i))) {
+			if (x < (rightBoardStartX + tileWidth + (tileWidth * i))) {
 				col = 7 - i;
+				break;
 			}
 		}
 
@@ -546,6 +576,28 @@ vector<int> ChessBoard::getTileCoordinate(int x, int y) {
 
 	}
 
+}
+
+
+vector<int> ChessBoard::getCoordinateFromTile(int row, int col, int boardTurn) {
+
+	int x, y;
+	vector<int> result;
+
+	if (boardTurn == 0) {
+		x = (tileWidth / 2) + (col * tileWidth);
+		y = ofGetWindowHeight() - (tileHeight * 2) - (row * tileHeight);
+		result = { x, y };
+	}
+	else {
+		int rightBoardStartX = tileWidth * ((12.0 / 106.0) + 9.5);
+		x = rightBoardStartX + ((7 - col) * tileWidth);
+		y = tileHeight + (tileHeight * row);
+		result = { x, y };
+	}
+
+
+	return result;
 }
 
 

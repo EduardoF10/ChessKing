@@ -12,7 +12,7 @@ class ChessBoard {
 
 private:
 
-	BoardSquare* boardSquares[8][8];  // An array of chess tiles
+	BoardSquare* boardSquares[8][8];  // The grid of chess tiles
 
 	FluctSquare* fluctile;  // An object that enables fluctuating effect
 
@@ -42,17 +42,16 @@ private:
 
 	bool clickEnabled;  // Enables or disables the selection of a chess piece
 
+	int boardTurn;  // Indicates which side of the board has the turn (left 0 right 1)
+
+	int tileWidth, tileHeight;  // The size of the screen will be measured using these tile dimensions
+
 	/**
 	* Sets the board to play the game
-	* 
+	*
 	* @param player1 - The team color of player 1
 	*/
 	void setBoard(string player1);
-
-	int invertX(int x);
-	int invertY(int y);
-
-	float tileWidth, tileHeight;  // The size of the screen will be measured using these tile dimensions
 
 
 public:
@@ -65,15 +64,13 @@ public:
 	FluctSquare* getFluct() { return this->fluctile; };
 
 
-	// @return The chess board image in use
+	// @return The chessboard image in use
 	ofImage getBoardImage() { return this->boardSprite; };
 
 
 	/**
-	* Returns a copy of a selected chess piece
-	*
 	* @param piece - A chess piece
-	* @return A copy of piece
+	* @return A copy of a chess piece
 	*/
 	ChessPiece* getPieceCopy(ChessPiece* piece);
 
@@ -89,11 +86,11 @@ public:
 	/**
 	* Sets the properties of the chess move that will take place
 	*
-	* @param xGoal - The x coordinate where the piece will end up
-	* @param yGoal - The y coordinate where the piece will end up
+	* @param row - The row where the piece will end up
+	* @param col - The column where the piece will end up
 	* @param moveToken - The type of move
 	*/
-	void setMove(int xGoal, int yGoal, int moveToken);
+	void setMove(int row, int col, int moveToken);
 
 
 	// Renders the current state of the chess board
@@ -151,6 +148,16 @@ public:
 	* additional value that indicates on which board it is on (left 0 right 1)
 	*/
 	vector<int> getTileCoordinate(int x, int y);
+
+	/**
+	* 
+	* 
+	* @param row - The row where the chess tile is located
+	* @param col - The column where the chess tile is located
+	* @param boardTurn - The side of the board that we want to look on
+	* @return The x and y coordinate of a chess tile
+	*/
+	vector<int> getCoordinateFromTile(int row, int col, int boardTurn);
 
 };
 

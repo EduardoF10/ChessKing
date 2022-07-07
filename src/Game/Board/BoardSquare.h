@@ -32,10 +32,12 @@ public:
 	/**
 	* Sets the coordinates for the piece in this tile
 	* 
-	* @param x - The x coordinates for the chess piece
-	* @param y - The y coordinates for the chess piece
+	* @param xL - The x coordinates for the chess piece in the left board
+	* @param xR - The x coordinates for the chess piece in the right board
+	* @param yL - The y coordinates for the chess piece in the left board
+	* @param yR - The y coordinates for the chess piece in the right board
 	*/
-	void setPieceCoordinates(int x, int y);
+	void setPieceCoordinates(int xL, int yL, int xR, int yR);
 
 
 	// @return The chess piece located in this tile

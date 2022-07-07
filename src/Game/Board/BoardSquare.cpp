@@ -16,9 +16,11 @@ void BoardSquare::setResident(ChessPiece* resident) {
 	this->used = true;
 }
 
-void BoardSquare::setPieceCoordinates(int x, int y) {
-	this->resident->setOX(x);
-	this->resident->setOY(y);
+void BoardSquare::setPieceCoordinates(int xL, int yL, int xR, int yR) {
+	this->resident->setLX(xL);
+	this->resident->setLY(yL);
+	this->resident->setRX(xR);
+	this->resident->setRY(yR);
 }
 
 void BoardSquare::clear() {

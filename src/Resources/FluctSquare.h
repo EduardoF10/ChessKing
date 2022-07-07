@@ -59,7 +59,7 @@ public:
 	* @param selectedPiece - The piece that was clicked on the board
 	* @param squareLocations - All the x and y coordinates of the available tiles where it can move
 	*/
-	void render(ChessPiece* selectedPiece, vector<vector<int>> squareLocations);
+	void render(ChessPiece* selectedPiece, vector<vector<int>> squareLocations, int boardTurn);
 
 
 	// Updates the properties of the pulsating effect

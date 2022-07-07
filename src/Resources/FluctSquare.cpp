@@ -10,14 +10,21 @@ FluctSquare::FluctSquare(string boardPath) {
 }
 
 
-void FluctSquare::render(ChessPiece* selectedPiece, vector<vector<int>> squareLocations) {
-
-    int OX = selectedPiece->getOX();
-    int OY = selectedPiece->getOY();
-    int OW = selectedPiece->getOW();
-    int OH = selectedPiece->getOH();
-    renderSelectionEffect(OX, OY, OW, OH);
-    renderValidMoves(squareLocations, OW, OH);
+void FluctSquare::render(ChessPiece* selectedPiece, vector<vector<int>> squareLocations, int boardTurn) {
+    
+    int OX, OY;
+    if (boardTurn == 0) {
+        OX = selectedPiece->getLX();
+        OY = selectedPiece->getLY();
+    }
+    else {
+        OX = selectedPiece->getRX();
+        OY = selectedPiece->getRY();
+    }
+    int width = selectedPiece->getW();
+    int height = selectedPiece->getH();
+    renderSelectionEffect(OX, OY, width, height);
+    renderValidMoves(squareLocations, width, height);
 
     // Resetting the draw color after rendering the effect
     ofSetColor(255, 255, 255);
@@ -47,7 +54,7 @@ void FluctSquare::renderValidMoves(vector<vector<int>> squareLocations, int ow, 
     // Setting the pulsating color and opacity 
     ofSetColor(119, 198, 110, opacity);
 
-    // Rendering the pulsating image for each tile with coordinates from squareLocations
+    // Rendering the pulsating image for each tile on the left board
     for (int i = 0; i < squareLocations.size(); i++) {
         ofDrawRectangle(squareLocations.at(i).at(0), squareLocations.at(i).at(1), ow, oh);
     }

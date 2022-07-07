@@ -33,51 +33,53 @@ public:
     /**
     * Constructor
     * 
-    * @param xL - The x coordinate in pixels of the chess piece in the left board
-    * @param yL - The y coordinate in pixels of the chess piece in the left board
-    * @param xR - The x coordinate in pixels of the chess piece in the right board
-    * @param yR - The y coordinate in pixels of the chess piece in the right board
-    * @param w - The width distance in pixels of the chess piece
-    * @param h - The height distance in pixels of the chess piece
+    * @param xL - The x coordinate of the chess piece in the left board
+    * @param yL - The y coordinate of the chess piece in the left board
+    * @param xR - The x coordinate of the chess piece in the right board
+    * @param yR - The y coordinate of the chess piece in the right board
+    * @param w - The width of the chess piece
+    * @param h - The height of the chess piece
     * @param team - The team color of the chess piece
-    * @param type - The type of chess piece
+    * @param type - The type of chess piece (pawn, bishop, knight, ...)
     */
     ChessPiece(int xL, int yL, int xR, int yR, int w, int h, string team, string type);
 
-    // The chess piece is rendered in the left board
-    void renderLeftBoard();
 
-    // The chess piece is rendered in the right board
-    void renderRightBoard();
+    // @return The x coordinate of the chess piece in the left board
+    int getLX() { return leftX; };
+
+    // @return The x coordinate of the chess piece in the right board
+    int getRX() { return rightX; }
+
+    // @return The y coordinate of the chess piece in the left board
+    int getLY() { return leftY; };
+
+    // @return The y coordinate of the chess piece in the right board
+    int getRY() { return rightY; }
+
+    // @return The width of the chess piece
+    int getW() { return width; };
+
+    // @return The height of the chess piece
+    int getH() { return height; };
+
+
+    // Sets coordinates and dimensions
+    void setLX(int x) { this->leftX = x; };
+    // Sets coordinates and dimensions
+    void setRX(int x) { this->rightX = x; };
+    // Sets coordinates and dimensions
+    void setLY(int y) { this->leftY = y; };
+    // Sets coordinates and dimensions
+    void setRY(int y) { this->rightY = y; };
+    // Sets coordinates and dimensions
+    void setOW(int ow) { this->width = ow; };
+    // Sets coordinates and dimensions
+    void setOH(int oh) { this->height = oh; };
 
 
     // The chess piece is rendered in both boards
     void render();
-
-
-    /**
-    * The piece is rendered at ox, oy
-    * 
-    * @param ox - The x coordinate in pixels
-    * @param oy - The y coordinate in pixels
-    */
-    void render(int ox, int oy);
-
-
-    // @return The x coordinate in pixels of the chess piece
-    int getOX() { return leftX; };
-
-
-    // @return The y coordinate in pixels of the chess piece
-    int getOY() { return leftY; };
-
-
-    // @return The width distance in pixels of the chess piece
-    int getOW() { return width; };
-
-
-    // @return The height distance in pixels of the chess piece
-    int getOH() { return height; };
 
 
     // @return The type of chess piece
@@ -99,18 +101,7 @@ public:
     * @return True if the piece belongs to the same team and false otherwise
     */
     bool sameTeam(string team);
-
-
-    // Sets coordinates and dimensions
-    void setOX(int ox) { this->leftX = ox; };
-    // Sets coordinates and dimensions
-    void setOY(int oy) { this->rightY = oy; };
-    // Sets coordinates and dimensions
-    void setOW(int ow) { this->width = ow; };
-    // Sets coordinates and dimensions
-    void setOH(int oh) { this->height = oh; };
-
-
+    
 
     bool isAlive() { return alive; };
     bool isSelected() { return selected; };
