@@ -10,6 +10,12 @@ class ofApp : public ofBaseApp {
 
 		ChessBoard* chessBoard;  // The chess board where the game will be played
 
+		int mouseCounter; // Indicates how long the mouse has been pressed down
+
+		bool counterEnabled;  // Allows the count of frames that the mouse is pressed down
+
+		bool dragEnabled; // Allows the user to drag pieces
+
 
 	public:
 

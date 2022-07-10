@@ -82,6 +82,16 @@ public:
     void render();
 
 
+    /**
+    * The chess piece is rendered at a specific location
+    * 
+    * @param x - The x coordinate that is desired
+    * @param y - The y coordinate that is desired
+    */
+    void render(int x, int y);
+
+
+
     // @return The type of chess piece
     string getType() { return type; };
 

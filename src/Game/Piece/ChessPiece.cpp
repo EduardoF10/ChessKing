@@ -50,6 +50,11 @@ void ChessPiece::render() {
 }
 
 
+void ChessPiece::render(int x, int y) {
+    this->spriteObj.draw(x, y, width, height);
+}
+
+
 bool ChessPiece::sameTeam(string team) {
     if (this == NULL) {
         return false;

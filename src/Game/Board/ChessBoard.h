@@ -46,12 +46,18 @@ private:
 
 	int tileWidth, tileHeight;  // The size of the screen will be measured using these tile dimensions
 
+	bool dragMoveEnabled;  // Indicates if a dragged move is in effect
+
+
+
 	/**
 	* Sets the board to play the game
 	*
 	* @param player1 - The team color of player 1
 	*/
 	void setBoard(string player1);
+
+
 
 
 public:
@@ -119,8 +125,27 @@ public:
 	bool clickedValidMove(int x, int y);
 
 
-	// Renders the move selected by the player
-	void renderMove();
+	/**
+	* Renders the move selected by the player on the specified board
+	* 
+	* @param leftBoard - Specifies if the move will be rendered on the left board (show 1 no show 0)
+	* @param rightBoard - Specifies if the move will be rendered on the right board (show 1 no show 0)
+	*/
+	void renderMove(int leftBoard, int rightBoard);
+
+
+	// Renders the active piece on the coordinates of the mouse pointer
+	void renderDrag();
+
+
+	/**
+	* Hides the rendering of a chess piece
+	* 
+	* @param piece - The piece that will disappear
+	* @param boardTurn - Indicates which side of the board we are on
+	*/
+	void hidePiece(ChessPiece* piece, int boardTurn);
+
 
 
 	/**
@@ -158,6 +183,17 @@ public:
 	* @return The x and y coordinate of a chess tile
 	*/
 	vector<int> getCoordinateFromTile(int row, int col, int boardTurn);
+
+	/**
+	* Executes the process after dropping a piece
+	* 
+	* @param x - The x coordinate of the mouse after releasing it
+	* @param y - The y coordinate of the mouse after releasing it
+	*/
+	void placedPiece(int x, int y);
+
+	// Reset piece selection
+	void resetSelection();
 
 };
 

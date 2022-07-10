@@ -34,9 +34,10 @@ void ChessBoard::setBoard(string player1) {
 	this->validMoves = {};
 	this->moveDestination = {};
 	this->moveSpeed = {};
-	Player* redPlayer = new Player("red", true);
+	Player* redPlayer = new Player("blue", true);
 	this->currentPlayer = redPlayer;
 	this->player1Pieces = {};
+	this->dragMoveEnabled = false;
 
 	// Filling the first row of the board
 	ChessPiece* rook1 = new ChessPiece(53, 864, 1761, 108, 106, 108, player1, "rook");
@@ -108,11 +109,25 @@ void ChessBoard::render() {
 		ofSetColor(255, 255, 255);
 	}
 	if (moveEnabled == true) {
-		renderMove();
+		if (dragMoveEnabled == true) {
+			if (boardTurn == 0) {
+				renderMove(0, 1);
+			}
+			else {
+				renderMove(1, 0);
+			}
+		}
+		else {
+			renderMove(1, 1);
+		}
 	}
 }
 
 void ChessBoard::onClick(int x, int y) {
+
+	if (clickEnabled == false) {
+		return;
+	}
 
 	// Getting the coordinates of the tile that was clicked
 	vector<int> tileLocation = getTileCoordinate(x, y);
@@ -144,10 +159,8 @@ void ChessBoard::onClick(int x, int y) {
 	if (activePiece != NULL) {
 		vector<int> activeTile = getTileCoordinate(activePiece->getLX(), activePiece->getLY());
 		if (row == activeTile.at(0) && col == activeTile.at(1)) {
-			this->fluctile->reset();
-			this->fluctEnabled = false;
+			resetSelection();
 			this->activePiece = NULL;
-			this->validMoves.clear();
 			return;
 		}
 
@@ -193,7 +206,7 @@ void ChessBoard::tick() {
 }
 
 
-void ChessBoard::renderMove() {
+void ChessBoard::renderMove(int leftBoard, int rightBoard) {
 	vector<int> tileLoc = {};
 	if (boardTurn == 0) {
 		tileLoc = getTileCoordinate(activePiece->getLX(), activePiece->getLY());
@@ -221,13 +234,61 @@ void ChessBoard::renderMove() {
 		this->moveEnabled = false;
 		this->clickEnabled = true;
 		this->activePiece = NULL;
+		this->dragMoveEnabled = false;
+		moveDestination.clear();
+		moveSpeed.clear();
 		return;
 	}
 	else {
 		// Updating the coordinates of the moving chess piece
-		boardSquares[row][col]->setPieceCoordinates(residentLX + (int) moveSpeed.at(0), residentLY + (int) moveSpeed.at(1), residentRX + (int) moveSpeed.at(2), residentRY + (int) moveSpeed.at(3));
+		boardSquares[row][col]->setPieceCoordinates(residentLX + ((int) moveSpeed.at(0) * leftBoard), residentLY + ((int) moveSpeed.at(1) * leftBoard), residentRX + ((int) moveSpeed.at(2)* rightBoard), residentRY + ((int) moveSpeed.at(3) * rightBoard));
 		this->moveCounter--;
 	}
+}
+
+void ChessBoard::renderDrag() {
+
+	if (activePiece == NULL) {
+		return;
+	}
+
+	hidePiece(activePiece, boardTurn);
+	int x = ofGetMouseX();
+	int y = ofGetMouseY();
+	int startX = x - (tileWidth / 2);
+	int startY = y - (tileHeight / 2);
+	this->activePiece->render(startX, startY);
+	
+
+}
+
+void ChessBoard::hidePiece(ChessPiece* piece, int boardTurn) {
+
+	int x, y;
+
+	if (boardTurn == 0) {
+		x = piece->getLX();
+		y = piece->getLY();
+	}
+	else {
+		x = piece->getRX();
+		y = piece->getRY();
+	}
+
+	// Obtaining the RGB values of a pixel in the tile where the chess piece is located
+	ofColor colorTile = boardSprite.getColor(x, y);
+	int redValue = (int)colorTile.r;
+	int greenValue = (int)colorTile.g;
+	int blueValue = (int)colorTile.b;
+
+	// Setting the tile color
+	ofSetColor(redValue, greenValue, blueValue);
+
+	// Rendering the tile
+	ofDrawRectangle(x, y, tileWidth, tileHeight);
+
+	// Cleaning color
+	ofSetColor(255, 255, 255);
 }
 
 
@@ -371,7 +432,7 @@ vector<vector<int>> ChessBoard::getValidMoves(string team, string direction, int
 				newOY = oy + (dirY * oh * multY);
 				multY *= -1;
 				// Check if the square is bounded in the region
-				if (newOY < tileHeight || newOY >= tileHeight * 8) {
+				if (newOY < tileHeight || newOY > tileHeight * 8) {
 					continue;
 				}
 				coor = getTileCoordinate(newOX, newOY);
@@ -598,6 +659,48 @@ vector<int> ChessBoard::getCoordinateFromTile(int row, int col, int boardTurn) {
 
 
 	return result;
+}
+
+void ChessBoard::placedPiece(int x, int y) {
+
+	// If a piece wasn't selected
+	if (activePiece == NULL) {
+		return;
+	}
+
+	// If the piece was dropped on a valid move tile
+	if (clickedValidMove(x, y)) {
+		this->moveEnabled = true;
+		this->dragMoveEnabled = true;
+		this->clickEnabled = false;
+
+		vector<int> tileLoc = getTileCoordinate(x, y);
+		vector<int> tileCoor = getCoordinateFromTile(tileLoc.at(0), tileLoc.at(1), boardTurn);
+
+		// The piece is set on the board it was dropped
+		vector<int> previousTile = getTileCoordinate(activePiece->getLX(), activePiece->getLY());
+		if (boardTurn == 0) {
+			boardSquares[previousTile.at(0)][previousTile.at(1)]->setPieceCoordinates(moveDestination.at(0), moveDestination.at(1), activePiece->getRX(), activePiece->getRY());
+		}
+		else {
+			boardSquares[previousTile.at(0)][previousTile.at(1)]->setPieceCoordinates(activePiece->getLX(), activePiece->getLY(), moveDestination.at(2), moveDestination.at(3));
+		}
+
+	}
+	else {
+		this->clickEnabled = true;
+		this->validMoves.clear();
+		this->activePiece = NULL;
+	}
+	this->fluctEnabled = false;
+}
+
+void ChessBoard::resetSelection() {
+	 
+	this->fluctile->reset();
+	this->fluctEnabled = false;
+	this->validMoves.clear();
+
 }
 
 

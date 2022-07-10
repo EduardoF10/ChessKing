@@ -58,6 +58,7 @@ public:
 	* 
 	* @param selectedPiece - The piece that was clicked on the board
 	* @param squareLocations - All the x and y coordinates of the available tiles where it can move
+	* @param boardTurn - Indicates which board will render the available move spaces
 	*/
 	void render(ChessPiece* selectedPiece, vector<vector<int>> squareLocations, int boardTurn);
 
